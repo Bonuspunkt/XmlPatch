@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<diff>
+  <replace sel="doc/foo[@a='1']">
+    <bar a="2"/>
+  </replace>
+</diff>
