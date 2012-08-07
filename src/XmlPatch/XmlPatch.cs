@@ -22,18 +22,18 @@ namespace XmlPatch
         {
             foreach (XmlNode node in diffDoc.SelectSingleNode("/diff").ChildNodes)
             {
-                //System.Diagnostics.Debugger.Break();
-                var workNode = baseDoc.SelectSingleNode(node.Attributes["sel"].Value);
+                var targetNode = baseDoc.SelectSingleNode(node.Attributes["sel"].Value);
 
                 switch (node.Name)
                 {
                     case "add":
-                        Add(baseDoc, node, workNode);
+                        Add(baseDoc, node, targetNode);
                         break;
                     case "remove":
-                        workNode.ParentNode.RemoveChild(workNode);
+                        Remove(node, targetNode);
                         break;
                     case "replace":
+                        Replace(baseDoc, node, targetNode);
                         break;
                 }
             }
@@ -41,14 +41,23 @@ namespace XmlPatch
             return baseDoc;
         }
 
-        private static void Add(XmlDocument baseDoc, XmlNode diffNode, XmlNode workNode)
+        private static void Add(XmlDocument baseDoc, XmlNode diffNode, XmlNode targetNode)
         {
             var typeAttribute = diffNode.Attributes["type"];
-            //var posAttribute = diffNode.Attributes["pos"];
+            var posAttribute = diffNode.Attributes["pos"];
+
+            if (posAttribute != null)
+            {
+                System.Diagnostics.Debugger.Break();
+            }
 
             if (typeAttribute == null)
             {
-                workNode.InnerXml += diffNode.InnerXml;
+                foreach (XmlNode diffChild in diffNode.ChildNodes)
+                {
+                    var importNode = baseDoc.ImportNode(diffChild, true);
+                    targetNode.AppendChild(importNode);
+                }
                 return;
             }
 
@@ -56,22 +65,54 @@ namespace XmlPatch
             {
                 var attribute = baseDoc.CreateAttribute(typeAttribute.Value.Substring(1));
                 attribute.Value = diffNode.InnerXml;
-                workNode.Attributes.Append(attribute);
+                targetNode.Attributes.Append(attribute);
 
                 return;
             }
             if (typeAttribute.Value.StartsWith("namespace::"))
             {
-                // <add sel="doc" type="namespace::pref">urn:ns:xxx</add>
-                // -- <doc xmlns:pref="urn:ns:xxx">
                 var attribute = baseDoc.CreateAttribute("xmlns:" + typeAttribute.Value.Substring(11));
                 attribute.Value = diffNode.InnerXml;
 
-                workNode.Attributes.Append(attribute);
+                targetNode.Attributes.Append(attribute);
                 return;
             }
 
             throw new NotImplementedException();
+        }
+
+        private static void Remove(XmlNode diffNode, XmlNode targetNode)
+        {
+            if (targetNode.ParentNode != null)
+            {
+                targetNode.ParentNode.RemoveChild(targetNode);
+                return;
+            }
+            if (targetNode is XmlAttribute)
+            {
+                var attribute = (XmlAttribute)targetNode;
+                attribute.OwnerElement.RemoveAttributeNode(attribute);
+                return;
+            }
+            throw new NotImplementedException();
+        }
+
+        private static void Replace(XmlDocument baseDoc, XmlNode diffNode, XmlNode targetNode)
+        {
+            var insertAfter = targetNode;
+
+            if (targetNode is XmlAttribute)
+            {
+                targetNode.Value = diffNode.InnerXml;
+                return;
+            }
+
+            foreach (XmlNode diffChild in diffNode.ChildNodes)
+            {
+                var importNode = baseDoc.ImportNode(diffChild, true);
+                insertAfter = targetNode.ParentNode.InsertAfter(importNode, targetNode);
+            }
+            targetNode.ParentNode.RemoveChild(targetNode);
         }
     }
 }

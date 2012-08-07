@@ -47,19 +47,19 @@ namespace XmlPatch.Test
             Run(4);
         }
         
-        [Fact(Skip="not done yet")]
+        [Fact]
         public void A5_Adding_Multiple_Nodes()
         {
             Run(5);
         }
         
-        [Fact(Skip="not done yet")]
+        [Fact]
         public void A6_Replacing_an_Element()
         {
             Run(6);
         }
         
-        [Fact(Skip="not done yet")]
+        [Fact]
         public void A7_Replacing_an_Attribute_Value()
         {
             Run(7);
@@ -71,7 +71,7 @@ namespace XmlPatch.Test
             Run(8);
         }
         
-        [Fact(Skip="not done yet")]
+        [Fact]
         public void A9_Replacing_a_Comment_Node()
         {
             Run(9);
@@ -83,19 +83,19 @@ namespace XmlPatch.Test
             Run(10);
         }
         
-        [Fact(Skip="not done yet")]
+        [Fact]
         public void A11_Replacing_a_Text_Node()
         {
             Run(11);
         }
         
-        [Fact(Skip="not done yet")]
+        [Fact]
         public void A12_Removing_an_Element()
         {
             Run(12);
         }
         
-        [Fact(Skip="not done yet")]
+        [Fact]
         public void A13_Removing_an_Attribute()
         {
             Run(13);
@@ -119,7 +119,7 @@ namespace XmlPatch.Test
             Run(16);
         }
         
-        [Fact(Skip="not done yet")]
+        [Fact]
         public void A17_Removing_a_Text_Node()
         {
             Run(17);
