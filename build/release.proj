@@ -8,7 +8,7 @@
     <MSBuild Projects="..\src\XmlPatch.sln" Properties="Configuration=Release" />
   </Target>
   <Target Name="Test" DependsOnTargets="Build">
-    <xunit Assembly="..\output\release\xmlpatch.test.dll" />
+    <xunit Assembly="..\output\release\XmlPatch.Test.dll" />
   </Target>
 
 </Project>
