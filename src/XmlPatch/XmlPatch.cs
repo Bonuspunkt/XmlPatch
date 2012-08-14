@@ -8,6 +8,10 @@ namespace XmlPatch
 {
     public class XmlPatch
     {
+        private const string Before = "before";
+        private const string After = "after";
+
+
         public XmlDocument Patch(string baseFile, string diffFile)
         {
             var baseDoc = new XmlDocument();
@@ -45,10 +49,10 @@ namespace XmlPatch
         {
             var typeAttribute = diffNode.Attributes["type"];
             var posAttribute = diffNode.Attributes["pos"];
-
+            string position = "prepend";
             if (posAttribute != null)
             {
-                System.Diagnostics.Debugger.Break();
+                position = posAttribute.Value;
             }
 
             if (typeAttribute == null)
@@ -56,7 +60,19 @@ namespace XmlPatch
                 foreach (XmlNode diffChild in diffNode.ChildNodes)
                 {
                     var importNode = baseDoc.ImportNode(diffChild, true);
-                    targetNode.AppendChild(importNode);
+
+                    switch (position)
+                    {
+                        case After:
+                            targetNode.ParentNode.InsertAfter(importNode, targetNode);
+                            break;
+                        case Before:
+                            targetNode.ParentNode.InsertBefore(importNode, targetNode);
+                            break;
+                        default:
+                            targetNode.AppendChild(importNode);
+                            break;
+                    }
                 }
                 return;
             }
