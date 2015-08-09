@@ -10,3 +10,6 @@ nearly complete, only 'Several Patches With Namespace Mangling' fails
 msbuild build\release.proj
 ### mono
 xbuild build/release.proj
+
+## license
+[unlicense](http://unlicense.org/)
